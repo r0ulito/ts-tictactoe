@@ -1,1 +1,0 @@
-const toto: Array<number> = []
