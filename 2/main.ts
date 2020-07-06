@@ -14,7 +14,7 @@ const winningCombinations :Array<Array<number>> = [
 
 const cells :NodeListOf<HTMLElement> = document.querySelectorAll('.cell');
 const winnerParentEl :HTMLElement = document.querySelector('.winner') as HTMLElement;
-const winnerChildEl :HTMLElement = document.querySelector('.winner .text');
+const winnerChildEl :HTMLElement = document.querySelector('.winner .text') as HTMLElement;
 
 
 startGame();
