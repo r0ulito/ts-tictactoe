@@ -3,8 +3,9 @@ interface GameState {
     player :string
 }
 let startBoard :Array<string | number> = [];
-const humanPlayer  = 'O';
-const botPlayer  = 'X';
+let possibleMoves :Array<number | string> = [];
+const humanPlayer  = 'O', botPlayer  = 'X';
+const humancBGC  = 'lightblue', botBGC  = 'salmon';
 const winningCombinations :Array<Array<number>> = [
 	[0, 1, 2],
 	[3, 4, 5],
@@ -34,7 +35,11 @@ function startGame() :void {
 }
 
 function playerClickAction(e :Event) :void {
-	playerAction((e.target as HTMLInputElement).id, humanPlayer);      
+	playerAction((e.target as HTMLInputElement).id, humanPlayer);
+	possibleMoves = startBoard.filter(el => typeof el == 'number');
+	if(!isGameDraw() && isPlayerWinner(startBoard, humanPlayer) === null) {
+		playerAction(possibleMoves[0], botPlayer);
+	}      
 }
 
 function playerAction(id, player :string) :void {
@@ -64,16 +69,26 @@ function isPlayerWinner(board :(string | number)[], player : string) :GameState 
 	return gameState;
 }
 
+function isGameDraw() :boolean {
+	if(possibleMoves.length === 0) {
+		cells.forEach(el => el.style.backgroundColor = 'rgba(0, 255, 0, 0.5)');
+		winnerChildEl.innerText = 'Draw !';
+		winnerParentEl.style.display = 'block';
+		return true;
+	}
+	return false;
+}
+
 
 function gameEnd(gameState :GameState) :void {
-	const color :string = (gameState.player === humanPlayer ? 'lightblue': 'salmon');
+	const color :string = (gameState.player === humanPlayer ? humancBGC: botBGC);
 	cells.forEach((el) => {
 		el.removeEventListener('click', playerClickAction);
 	});
 	for(const index of winningCombinations[gameState.index]) {
-		const cell = document.getElementById('"' + index + '"') as HTMLElement;
+		const cell = document.getElementById(index.toString()) as HTMLElement;
 		cell.style.backgroundColor = color;
 	}
-	winnerChildEl.innerText = 'You win';
+	winnerChildEl.innerText =  gameState.player === humanPlayer ? 'You win' : 'You lose !';
 	winnerParentEl.style.display = 'block';
 }
